@@ -1,0 +1,38 @@
+{% if collection.image %}
+  {%- assign collection_image = collection.image -%}
+{% elsif collection.products.first and collection.products.first.images != empty %}
+  {%- assign collection_image = collection.products.first.featured_image -%}
+{% else %}
+  {% assign collection_image = blank %}
+{% endif %}
+
+<div class="collection-grid-item">
+  <a href="{% if collection.products == empty %}#{% else %}{{ collection.url }}{% endif %}" class="collection-grid-item__link">
+    {% unless collection_image == blank %}
+      <div class="collection-grid-item__overlay" style="background-image: url('{{ collection_image | img_url: '350x' }}')">
+      </div>
+      <h4 class="h5 collection-grid-item-title">
+          {% if collection.title == blank %}
+            {{ 'homepage.onboarding.collection_title' | t }}
+          {% else %}
+            {%- assign collection_title = collection.title | replace: 'recommendation', '' -%}
+            {{ collection_title }}
+          {% endif %}
+      </h4>
+
+      <noscript>
+        <div class="collection-grid-item__overlay" style="background-image: url('{{ collection_image | img_url: '350x' }}')"></div>
+      </noscript>
+    {% else %}
+      {% if collection == empty %}
+        <div class="collection-grid-item__overlay">
+          {% capture current %}{% cycle 1, 2, 3 %}{% endcapture %}
+          {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% else %}
+        <div class="collection-grid-item__overlay" style="background-image: url('{{ collection_image | img_url: '350x' }}')"></div>
+      {% endif %}
+    {% endunless %}
+
+  </a>
+</div>
